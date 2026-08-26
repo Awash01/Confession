@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Ek Chhoti Si Baat — Vermaji</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600;1,700;1,800&family=Poppins:wght@300;400;500;600&family=Caveat:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-top: #ffe3ec;
+    --bg-bottom: #fff3ea;
+    --paper: #fffcf8;
+    --paper-edge: #f7e9df;
+    --ink: #3d1b33;
+    --ink-soft: #7a4b68;
+    --rose: #ff5c86;
+    --rose-dark: #e23f6b;
+    --gold: #c79a5a;
+    --gold-dark: #a87c3e;
+    --shadow: rgba(61, 27, 51, 0.16);
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  body {
+    font-family: 'Poppins', sans-serif;
+    color: var(--ink);
+    background: radial-gradient(ellipse at top, var(--bg-top) 0%, var(--bg-bottom) 55%, #ffe9e0 100%);
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+  .stage {
+    position: relative;
+    min-height: 100dvh;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    overflow: hidden;
+  }
+  .hearts { position: absolute; inset: 0; pointer-events: none; z-index: 0; }
+  .hearts span {
+    position: absolute; bottom: -40px; color: var(--rose); opacity: 0.18; font-size: 22px;
+    animation-name: floatUp; animation-timing-function: ease-in; animation-iteration-count: infinite;
+  }
+  @keyframes floatUp {
+    0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+    10% { opacity: 0.22; }
+    90% { opacity: 0.14; }
+    100% { transform: translateY(-115vh) rotate(25deg); opacity: 0; }
+  }
+  .card {
+    position: relative; z-index: 1; width: min(92vw, 460px);
+    background: var(--paper); border-radius: 6px; padding: 52px 36px 40px; text-align: center;
+    box-shadow: 0 1px 0 var(--paper-edge), 0 30px 60px -20px var(--shadow), 0 10px 24px -12px var(--shadow);
+    transform: rotate(-0.6deg); animation: settle 0.7s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .card::before {
+    content: ""; position: absolute; inset: 10px; border: 1px solid rgba(199, 154, 90, 0.35);
+    border-radius: 3px; pointer-events: none;
+  }
+  @keyframes settle {
+    from { opacity: 0; transform: rotate(-0.6deg) translateY(14px) scale(0.98); }
+    to { opacity: 1; transform: rotate(-0.6deg) translateY(0) scale(1); }
+  }
+  .seal {
+    position: absolute; top: -26px; left: 50%; transform: translateX(-50%);
+    width: 56px; height: 56px; border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, var(--gold) 0%, var(--gold-dark) 70%);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Playfair Display', serif; font-style: italic; font-weight: 700;
+    color: #fff8ec; font-size: 22px; box-shadow: 0 6px 14px -4px rgba(168, 124, 62, 0.55);
+    border: 2px solid rgba(255, 255, 255, 0.35);
+  }
+  .eyebrow { font-family: 'Caveat', cursive; font-size: 22px; color: var(--ink-soft); margin: 20px 0 4px; }
+  .headline {
+    font-family: 'Playfair Display', serif; font-style: italic; font-weight: 700;
+    font-size: clamp(32px, 8vw, 44px); margin: 0 0 10px; color: var(--rose-dark); line-height: 1.1;
+  }
+  .subtext { font-size: 15px; color: var(--ink-soft); line-height: 1.55; max-width: 340px; margin: 0 auto 30px; }
+  .subtext b { color: var(--ink); }
+  .button-row { position: relative; display: flex; align-items: center; justify-content: center; gap: 18px; min-height: 64px; }
+  .btn {
+    border: none; border-radius: 999px; font-family: 'Poppins', sans-serif; font-weight: 600;
+    cursor: pointer; transition: transform 0.15s ease, box-shadow 0.15s ease; padding: 14px 30px; font-size: 16px;
+  }
+  .btn-yes { background: linear-gradient(135deg, var(--rose) 0%, var(--rose-dark) 100%); color: #fff8fb; box-shadow: 0 10px 22px -8px rgba(226, 63, 107, 0.55); }
+  .btn-yes:hover { transform: translateY(-2px) scale(1.03); }
+  .btn-no { position: relative; background: #fff; color: var(--ink-soft); border: 1.5px solid #ecd9e1; z-index: 2; }
+  .btn-no.escaping { position: fixed; z-index: 50; transition: top 0.28s cubic-bezier(0.34, 1.56, 0.64, 1), left 0.28s cubic-bezier(0.34, 1.56, 0.64, 1); }
+  .caption { margin-top: 26px; font-size: 13.5px; color: var(--ink-soft); min-height: 18px; font-style: italic; }
+  .signature { margin-top: 22px; font-family: 'Caveat', cursive; font-size: 22px; color: var(--gold-dark); }
+  .success { text-align: center; }
+  .success .big-heart { font-size: 54px; animation: pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); }
+  @keyframes pop { 0% { transform: scale(0); } 70% { transform: scale(1.15); } 100% { transform: scale(1); } }
+  .confetti { position: fixed; inset: 0; pointer-events: none; z-index: 40; overflow: hidden; display:none; }
+  .confetti span { position: absolute; top: -40px; font-size: 18px; animation-name: fall; animation-timing-function: linear; animation-iteration-count: 1; }
+  @keyframes fall { to { transform: translateY(105vh) rotate(360deg); opacity: 0.9; } }
+  .restart { margin-top: 18px; background: none; border: none; color: var(--ink-soft); text-decoration: underline; cursor: pointer; font-size: 13px; font-family: 'Poppins', sans-serif; }
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+  <main class="stage">
+    <div class="hearts" id="hearts" aria-hidden="true"></div>
+    <div class="confetti" id="confetti" aria-hidden="true"></div>
+
+    <div class="card">
+      <div class="seal">V</div>
+
+      <div id="askView">
+        <p class="eyebrow">Ek chhoti si baat, Vermaji</p>
+        <h1 class="headline">I think you like me.</h1>
+        <p class="subtext">Bas itna hi kehna tha.—</p>
+
+        <div class="button-row">
+          <button class="btn btn-yes" id="yesBtn">Yes 💕</button>
+          <button class="btn btn-no" id="noBtn">No</button>
+        </div>
+
+        <p class="caption" id="caption"></p>
+        <p class="signature">— Vermaji</p>
+      </div>
+
+      <div id="successView" class="success hidden">
+        <div class="big-heart">💖</div>
+        <h1 class="headline" style="margin-top:10px;">Yayy!</h1>
+        <p class="subtext">You made it worth it. 🌸</p>
+        <p class="signature">— Vermaji</p>
+        <button class="restart" id="restartBtn">phir se try krna hai kya? ↺</button>
+      </div>
+    </div>
+  </main>
+
+<script>
+  const AMBIENT_HEARTS = [
+    { left: "6%", size: 16, delay: "0s", duration: "11s" },
+    { left: "16%", size: 22, delay: "2.5s", duration: "13s" },
+    { left: "27%", size: 14, delay: "5s", duration: "10s" },
+    { left: "40%", size: 20, delay: "1s", duration: "14s" },
+    { left: "52%", size: 15, delay: "4s", duration: "12s" },
+    { left: "63%", size: 24, delay: "6.5s", duration: "11s" },
+    { left: "74%", size: 17, delay: "3s", duration: "13s" },
+    { left: "85%", size: 19, delay: "0.5s", duration: "12s" },
+    { left: "93%", size: 13, delay: "7s", duration: "10s" },
+    { left: "35%", size: 12, delay: "8s", duration: "9s" },
+  ];
+  const CAPTIONS = [
+    "Itni jaldi na, sochna toh padega 😏",
+    "Arre, No button daudta hai yaha 😄",
+    "Try harder, Vermaji haar nahi maante!",
+    "Yes wala button ekdum nearby hai 🙈",
+    "No ka option hai, use karna mushkil hai 😌",
+    "Bas Yes bacha hai ab toh 🌸",
+  ];
+  const CONFETTI = ["💗", "🌸", "✨", "💌", "🌷"];
+
+  const heartsEl = document.getElementById('hearts');
+  AMBIENT_HEARTS.forEach(h => {
+    const s = document.createElement('span');
+    s.textContent = '❤';
+    s.style.left = h.left;
+    s.style.fontSize = h.size + 'px';
+    s.style.animationDelay = h.delay;
+    s.style.animationDuration = h.duration;
+    heartsEl.appendChild(s);
+  });
+
+  const yesBtn = document.getElementById('yesBtn');
+  const noBtn = document.getElementById('noBtn');
+  const caption = document.getElementById('caption');
+  const askView = document.getElementById('askView');
+  const successView = document.getElementById('successView');
+  const restartBtn = document.getElementById('restartBtn');
+  const confettiEl = document.getElementById('confetti');
+
+  let dodges = 0;
+
+  function dodge() {
+    const rect = noBtn.getBoundingClientRect();
+    const padding = 24;
+    const w = rect.width || 110, h = rect.height || 48;
+    const maxX = Math.max(padding, window.innerWidth - w - padding);
+    const maxY = Math.max(padding, window.innerHeight - h - padding);
+    const x = padding + Math.random() * (maxX - padding);
+    const y = padding + Math.random() * (maxY - padding);
+    noBtn.classList.add('escaping');
+    noBtn.style.left = x + 'px';
+    noBtn.style.top = y + 'px';
+    dodges = Math.min(dodges + 1, 6);
+    yesBtn.style.transform = `scale(${1 + dodges * 0.055})`;
+    noBtn.style.transform = `scale(${1 - dodges * 0.055})`;
+    caption.textContent = CAPTIONS[Math.min(dodges - 1, CAPTIONS.length - 1)];
+  }
+
+  noBtn.addEventListener('mouseenter', dodge);
+  noBtn.addEventListener('touchstart', (e) => { e.preventDefault(); dodge(); }, { passive: false });
+  noBtn.addEventListener('click', (e) => e.preventDefault());
+
+  function showConfetti() {
+    confettiEl.innerHTML = '';
+    confettiEl.style.display = 'block';
+    for (let i = 0; i < 28; i++) {
+      const s = document.createElement('span');
+      s.textContent = CONFETTI[i % CONFETTI.length];
+      s.style.left = Math.random() * 100 + '%';
+      s.style.animationDelay = (Math.random() * 0.6) + 's';
+      s.style.animationDuration = (2.8 + Math.random() * 1.6) + 's';
+      confettiEl.appendChild(s);
+    }
+  }
+
+  yesBtn.addEventListener('click', () => {
+    askView.classList.add('hidden');
+    successView.classList.remove('hidden');
+    showConfetti();
+  });
+
+  restartBtn.addEventListener('click', () => {
+    dodges = 0;
+    noBtn.classList.remove('escaping');
+    noBtn.style.transform = 'scale(1)';
+    noBtn.style.left = '';
+    noBtn.style.top = '';
+    yesBtn.style.transform = 'scale(1)';
+    caption.textContent = '';
+    confettiEl.style.display = 'none';
+    successView.classList.add('hidden');
+    askView.classList.remove('hidden');
+  });
+</script>
+</body>
+</html>
